@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+
+<StackPane xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="Controller.AfficherUser"
+           style="-fx-background-color: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);">
+
+    <!-- Conteneur principal -->
+    <VBox spacing="0" alignment="CENTER" maxWidth="1100" maxHeight="750"
+          style="-fx-background-color: white;
+                 -fx-background-radius: 25px;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 25, 0, 0, 8);">
+
+        <!-- En-tête -->
+        <VBox alignment="CENTER" spacing="12"
+              style="-fx-background-color: linear-gradient(to right, #2563eb, #3b82f6);
+                     -fx-background-radius: 25 25 0 0;
+                     -fx-padding: 32 25 32 25;">
+
+            <Label text="📊" style="-fx-font-size: 48px;"/>
+
+            <Label text="Liste des Utilisateurs"
+                   style="-fx-font-family: 'Poppins', 'Montserrat', sans-serif;
+                          -fx-font-size: 30px;
+                          -fx-font-weight: bold;
+                          -fx-text-fill: white;"/>
+
+            <Label fx:id="countLabel"
+                   text="0 utilisateur(s)"
+                   style="-fx-font-family: 'Roboto', 'Open Sans', sans-serif;
+                          -fx-font-size: 14px;
+                          -fx-text-fill: rgba(255,255,255,0.9);"/>
+        </VBox>
+
+        <!-- Zone de recherche et actions -->
+        <VBox spacing="22" alignment="CENTER">
+            <padding>
+                <Insets top="28" right="35" bottom="15" left="35"/>
+            </padding>
+
+            <!-- Barre de recherche -->
+            <HBox spacing="12" alignment="CENTER">
+                <Label text="🔍" style="-fx-font-size: 22px;"/>
+
+                <TextField fx:id="searchField"
+                           promptText="Rechercher par nom, email ou rôle..."
+                           style="-fx-pref-width: 600px;
+                                  -fx-pref-height: 45px;
+                                  -fx-background-color: #f8fafc;
+                                  -fx-background-radius: 25px;
+                                  -fx-border-color: #2563eb;
+                                  -fx-border-width: 2px;
+                                  -fx-border-radius: 25px;
+                                  -fx-font-family: 'Roboto', 'Open Sans', sans-serif;
+                                  -fx-font-size: 15px;
+                                  -fx-padding: 12 25 12 25;"/>
+            </HBox>
+
+            <!-- TableView -->
+            <TableView fx:id="userTable"
+                       prefWidth="1020"
+                       prefHeight="380"
+                       style="-fx-background-color: transparent;
+                              -fx-background-radius: 15px;
+                              -fx-border-color: #e2e8f0;
+                              -fx-border-width: 2px;
+                              -fx-border-radius: 15px;
+                              -fx-font-family: 'Roboto', 'Open Sans', sans-serif;">
+
+                <columns>
+                    <TableColumn fx:id="colId"
+                                 text="🆔 ID"
+                                 prefWidth="70"
+                                 style="-fx-alignment: CENTER;
+                                        -fx-font-family: 'Poppins', 'Montserrat', sans-serif;
+                                        -fx-font-weight: bold;
+                                        -fx-font-size: 13px;"/>
+
+                    <TableColumn fx:id="colNom"
+                                 text="👤 Nom"
+                                 prefWidth="200"
+                                 style="-fx-font-family: 'Poppins', 'Montserrat', sans-serif;
+                                        -fx-font-weight: bold;
+                                        -fx-font-size: 13px;"/>
+
+                    <TableColumn fx:id="colEmail"
+                                 text="📧 Email"
+                                 prefWidth="240"
+                                 style="-fx-font-family: 'Poppins', 'Montserrat', sans-serif;
+                                        -fx-font-weight: bold;
+                                        -fx-font-size: 13px;"/>
+
+                    <TableColumn fx:id="colMotDePasse"
+                                 text="🔒 Mot de passe"
+                                 prefWidth="220"
+                                 style="-fx-font-family: 'Poppins', 'Montserrat', sans-serif;
+                                        -fx-font-weight: bold;
+                                        -fx-font-size: 13px;"/>
+
+                    <TableColumn fx:id="colRole"
+                                 text="⭐ Rôle"
+                                 prefWidth="260"
+                                 style="-fx-alignment: CENTER;
+                                        -fx-font-family: 'Poppins', 'Montserrat', sans-serif;
+                                        -fx-font-weight: bold;
+                                        -fx-font-size: 13px;"/>
+                </columns>
+
+                <placeholder>
+                    <VBox alignment="CENTER" spacing="15">
+                        <Label text="📭" style="-fx-font-size: 56px;"/>
+                        <Label text="Aucun utilisateur trouvé"
+                               style="-fx-font-family: 'Roboto', 'Open Sans', sans-serif;
+                                      -fx-font-size: 18px;
+                                      -fx-text-fill: #94a3b8;"/>
+                        <Label text="Ajoutez votre premier utilisateur"
+                               style="-fx-font-family: 'Roboto', 'Open Sans', sans-serif;
+                                      -fx-font-size: 14px;
+                                      -fx-text-fill: #cbd5e1;"/>
+                    </VBox>
+                </placeholder>
+            </TableView>
+
+            <!-- Boutons d'action -->
+            <VBox spacing="12" alignment="CENTER">
+                <padding>
+                    <Insets top="12" bottom="22"/>
+                </padding>
+
+                <!-- Ligne 1: Actions principales -->
+                <HBox spacing="15" alignment="CENTER">
+                    <Button text="◀ Retour"
+                            onAction="#handleBack"
+                            style="-fx-background-color: #64748b;
+                                   -fx-text-fill: white;
+                                   -fx-font-family: 'Poppins', 'Montserrat', sans-serif;
+                                   -fx-font-weight: bold;
+                                   -fx-font-size: 14px;
+                                   -fx-padding: 13 32 13 32;
+                                   -fx-background-radius: 12px;
+                                   -fx-cursor: hand;
+                                   -fx-effect: dropshadow(gaussian, rgba(100, 116, 139, 0.4), 10, 0, 0, 4);">
+                        <font>
+                            <Font name="Poppins Bold" size="14"/>
+                        </font>
+                    </Button>
+
+                    <Button text="✏️ Modifier"
+                            onAction="#handleModify"
+                            style="-fx-background-color: linear-gradient(to right, #f97316, #fb923c);
+                                   -fx-text-fill: white;
+                                   -fx-font-family: 'Poppins', 'Montserrat', sans-serif;
+                                   -fx-font-weight: bold;
+                                   -fx-font-size: 14px;
+                                   -fx-padding: 13 32 13 32;
+                                   -fx-background-radius: 12px;
+                                   -fx-cursor: hand;
+                                   -fx-effect: dropshadow(gaussian, rgba(249, 115, 22, 0.4), 10, 0, 0, 4);">
+                        <font>
+                            <Font name="Poppins Bold" size="14"/>
+                        </font>
+                    </Button>
+
+                    <Button text="🔄 Rafraîchir"
+                            onAction="#handleRefresh"
+                            style="-fx-background-color: linear-gradient(to right, #2563eb, #3b82f6);
+                                   -fx-text-fill: white;
+                                   -fx-font-family: 'Poppins', 'Montserrat', sans-serif;
+                                   -fx-font-weight: bold;
+                                   -fx-font-size: 14px;
+                                   -fx-padding: 13 32 13 32;
+                                   -fx-background-radius: 12px;
+                                   -fx-cursor: hand;
+                                   -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.4), 10, 0, 0, 4);">
+                        <font>
+                            <Font name="Poppins Bold" size="14"/>
+                        </font>
+                    </Button>
+
+                    <Button text="🗑️ Supprimer"
+                            onAction="#handleDelete"
+                            style="-fx-background-color: linear-gradient(to right, #dc2626, #ef4444);
+                                   -fx-text-fill: white;
+                                   -fx-font-family: 'Poppins', 'Montserrat', sans-serif;
+                                   -fx-font-weight: bold;
+                                   -fx-font-size: 14px;
+                                   -fx-padding: 13 32 13 32;
+                                   -fx-background-radius: 12px;
+                                   -fx-cursor: hand;
+                                   -fx-effect: dropshadow(gaussian, rgba(220, 38, 38, 0.4), 10, 0, 0, 4);">
+                        <font>
+                            <Font name="Poppins Bold" size="14"/>
+                        </font>
+                    </Button>
+                </HBox>
+
+                <!-- Ligne 2: Gérer les rôles -->
+                <Button text="⭐ Gérer les Rôles"
+                        onAction="#handleManageRoles"
+                        style="-fx-background-color: linear-gradient(to right, #10b981, #059669);
+                               -fx-text-fill: white;
+                               -fx-font-family: 'Poppins', 'Montserrat', sans-serif;
+                               -fx-font-weight: bold;
+                               -fx-font-size: 14px;
+                               -fx-padding: 12 40 12 40;
+                               -fx-background-radius: 12px;
+                               -fx-cursor: hand;
+                               -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 10, 0, 0, 4);">
+                    <font>
+                        <Font name="Poppins Bold" size="14"/>
+                    </font>
+                </Button>
+            </VBox>
+
+        </VBox>
+
+    </VBox>
+
+</StackPane>
