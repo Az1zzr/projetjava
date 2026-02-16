@@ -213,14 +213,14 @@ public class AjouterUser {
 
             // Afficher un message de succès
             showAlert(Alert.AlertType.INFORMATION, "Succès",
-                    "✅ Utilisateur '" + newUser.getNom() + "' ajouté avec succès !");
+                    " Utilisateur '" + newUser.getNom() + "' ajouté avec succès !");
 
             // Réinitialiser les champs
             clearFields();
 
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "❌ Erreur lors de l'ajout : " + e.getMessage());
+                    " Erreur lors de l'ajout : " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -239,7 +239,7 @@ public class AjouterUser {
                 // Le fichier N'EXISTE PAS
                 System.err.println("ERREUR: UserTable.fxml NON TROUVÉ dans le classpath!");
                 showAlert(Alert.AlertType.ERROR, "Fichier introuvable",
-                        "❌ UserTable.fxml n'a pas été trouvé !\n\n" +
+                        " UserTable.fxml n'a pas été trouvé !\n\n" +
                                 "Vérifications à faire :\n" +
                                 "1. Le fichier est dans src/main/resources/UserTable.fxml\n" +
                                 "2. Le projet a été rebuild (Build → Rebuild Project)\n" +
@@ -252,7 +252,7 @@ public class AjouterUser {
             System.out.println("Chargement du fichier FXML...");
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
-            System.out.println("✅ Fichier chargé avec succès!");
+            System.out.println(" Fichier chargé avec succès!");
 
             // Étape 3 : Obtenir la scène actuelle
             Scene scene = nameField.getScene();
@@ -260,21 +260,21 @@ public class AjouterUser {
             if (scene == null) {
                 System.err.println("ERREUR: Impossible d'obtenir la scène actuelle!");
                 showAlert(Alert.AlertType.ERROR, "Erreur",
-                        "❌ Impossible d'obtenir la scène actuelle.");
+                        " Impossible d'obtenir la scène actuelle.");
                 return;
             }
 
             // Étape 4 : Changer la vue
             System.out.println("Changement de vue...");
             scene.setRoot(root);
-            System.out.println("✅ Navigation réussie vers UserTable!");
+            System.out.println(" Navigation réussie vers UserTable!");
 
         } catch (IOException e) {
             System.err.println("ERREUR IOException: " + e.getMessage());
             e.printStackTrace();
 
             showAlert(Alert.AlertType.ERROR, "Erreur de chargement",
-                    "❌ Impossible d'ouvrir la liste des utilisateurs :\n\n" +
+                    " Impossible d'ouvrir la liste des utilisateurs :\n\n" +
                             e.getMessage() + "\n\n" +
                             "Détails dans la console.");
         } catch (Exception e) {
@@ -282,7 +282,7 @@ public class AjouterUser {
             e.printStackTrace();
 
             showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "❌ Une erreur inattendue s'est produite :\n" + e.getMessage());
+                    " Une erreur inattendue s'est produite :\n" + e.getMessage());
         }
     }
 
@@ -299,33 +299,33 @@ public class AjouterUser {
             if (fxmlUrl == null) {
                 System.err.println("ERREUR: ROLE.fxml NON TROUVÉ!");
                 showAlert(Alert.AlertType.ERROR, "Fichier introuvable",
-                        "❌ ROLE.fxml n'a pas été trouvé dans le classpath!");
+                        " ROLE.fxml n'a pas été trouvé dans le classpath!");
                 return;
             }
 
             // Charger le fichier
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
-            System.out.println("✅ ROLE.fxml chargé avec succès!");
+            System.out.println(" ROLE.fxml chargé avec succès!");
 
             // Obtenir la scène actuelle
             Scene scene = nameField.getScene();
             if (scene == null) {
                 showAlert(Alert.AlertType.ERROR, "Erreur",
-                        "❌ Impossible d'obtenir la scène actuelle.");
+                        " Impossible d'obtenir la scène actuelle.");
                 return;
             }
 
             // Changer la vue
             scene.setRoot(root);
-            System.out.println("✅ Navigation réussie vers ROLE!");
+            System.out.println(" Navigation réussie vers ROLE!");
 
         } catch (IOException e) {
             System.err.println("ERREUR: " + e.getMessage());
             e.printStackTrace();
 
             showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "❌ Impossible d'ouvrir la gestion des rôles :\n" + e.getMessage());
+                    " Impossible d'ouvrir la gestion des rôles :\n" + e.getMessage());
         }
     }
 

@@ -230,10 +230,10 @@ public class AfficherUser {
                 filteredUsers.remove(selectedUser);
                 updateCountLabel();
                 showAlert(Alert.AlertType.INFORMATION, "Succès",
-                        "✅ Utilisateur supprimé avec succès !");
+                        " Utilisateur supprimé avec succès !");
             } catch (Exception e) {
                 showAlert(Alert.AlertType.ERROR, "Erreur",
-                        "❌ Erreur lors de la suppression : " + e.getMessage());
+                        " Erreur lors de la suppression : " + e.getMessage());
                 e.printStackTrace();
             }
         }
