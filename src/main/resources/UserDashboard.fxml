@@ -3,6 +3,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.image.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -55,6 +57,9 @@
 
                 <Label text="COMMUNICATION"
                        style="-fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: #3a5070; -fx-padding: 10 8 4 8;"/>
+                <Button fx:id="btnPublications" text="📰   Publications" maxWidth="Infinity" onAction="#showPublications"
+                        style="-fx-background-color: transparent; -fx-text-fill: #7a9ab8; -fx-font-size: 13px;
+                               -fx-alignment: CENTER_LEFT; -fx-padding: 12 16; -fx-background-radius: 10px; -fx-cursor: hand;"/>
                 <Button fx:id="btnFeedback" text="💬   Feedback" maxWidth="Infinity" onAction="#showFeedback"
                         style="-fx-background-color: transparent; -fx-text-fill: #7a9ab8; -fx-font-size: 13px;
                                -fx-alignment: CENTER_LEFT; -fx-padding: 12 16; -fx-background-radius: 10px; -fx-cursor: hand;"/>
@@ -100,13 +105,18 @@
                     <image><Image url="@/images/logo_localtrade.png"/></image>
                 </ImageView>
                 <Label text="›" style="-fx-font-size: 14px; -fx-text-fill: #cbd5e1;"/>
-                <Label fx:id="lblPageTitle" text="Mon Compte"
+                <Label fx:id="lblPageTitle" text="Accueil"
                        style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <StackPane minWidth="36" minHeight="36" maxWidth="36" maxHeight="36"
-                           style="-fx-background-color: #1e3a5f; -fx-background-radius: 50%;">
+                           style="-fx-background-color: #1e3a5f; -fx-background-radius: 50%; -fx-cursor: hand;"
+                           onMouseClicked="#handleTopAvatarClick">
                     <Label fx:id="lblTopAvatar" text="U"
                            style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                    <ImageView fx:id="imgTopAvatar" visible="false" managed="false"
+                               fitWidth="36" fitHeight="36" preserveRatio="false">
+                        <clip><Circle centerX="18" centerY="18" radius="18"/></clip>
+                    </ImageView>
                 </StackPane>
             </HBox>
             <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS"

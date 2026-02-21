@@ -28,6 +28,8 @@ public class UserDashboardController {
     @FXML private Button btnCommandes;
     @FXML private Button btnLivraisons;
     @FXML private Button btnFeedback;
+    @FXML private Button btnPublications;
+    @FXML private javafx.scene.image.ImageView imgTopAvatar;
 
     private Button activeButton;
     private final Map<String, Node> cache = new HashMap<>();
@@ -71,6 +73,17 @@ public class UserDashboardController {
         String init = displayName.trim().isEmpty() ? "U"
                 : String.valueOf(displayName.trim().charAt(0)).toUpperCase();
         if (lblAvatarInitial != null) lblAvatarInitial.setText(init);
+        // Top avatar photo
+        if (imgTopAvatar != null && user.getPhotoPath() != null && !user.getPhotoPath().isBlank()) {
+            java.io.File f = new java.io.File(user.getPhotoPath());
+            if (f.exists()) {
+                try {
+                    imgTopAvatar.setImage(new javafx.scene.image.Image(f.toURI().toString()));
+                    imgTopAvatar.setVisible(true); imgTopAvatar.setManaged(true);
+                    if (lblTopAvatar != null) { lblTopAvatar.setVisible(false); lblTopAvatar.setManaged(false); }
+                } catch (Exception ignored) {}
+            }
+        }
         if (lblTopAvatar     != null) lblTopAvatar.setText(init);
 
         // ✅ Badge couleur — startsWith pour gérer singulier ET pluriel
@@ -90,7 +103,8 @@ public class UserDashboardController {
     @FXML public void showProduits()   { loadPage("/Produit.fxml",     "Produits",   btnProduits); }
     @FXML public void showCommandes()  { loadPage("/Commande.fxml",    "Commandes",  btnCommandes); }
     @FXML public void showLivraisons() { loadPage("/Livraison.fxml",   "Livraisons", btnLivraisons); }
-    @FXML public void showFeedback()   { loadPage("/Feedback.fxml",    "Feedback",   btnFeedback); }
+    @FXML public void showFeedback()       { loadPage("/Feedback.fxml",      "Feedback",      btnFeedback); }
+    @FXML public void showPublications()   { loadPage("/Publications.fxml",  "Publications",  btnPublications); }
 
     private void loadPage(String path, String title, Button btn) {
         if (lblPageTitle != null) lblPageTitle.setText(title);
@@ -120,6 +134,11 @@ public class UserDashboardController {
         sub.setStyle("-fx-font-size: 13px; -fx-text-fill: #94a3b8;");
         box.getChildren().addAll(icon, lbl, sub);
         contentArea.getChildren().setAll(box);
+    }
+
+    /** Click sur l'avatar en haut à droite → Mon Compte */
+    @FXML private void handleTopAvatarClick() {
+        showAccueil();
     }
 
     @FXML private void handleLogout() {
