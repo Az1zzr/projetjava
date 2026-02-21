@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="Controller.PublicationsController"
+      spacing="0"
+      style="-fx-background-color: transparent;">
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                style="-fx-background: transparent; -fx-background-color: transparent;
+                       -fx-border-color: transparent;">
+        <VBox spacing="18" style="-fx-padding: 4 60 20 60; -fx-background-color: transparent;">
+
+            <!-- ══ Zone de création de post ══ -->
+            <VBox spacing="0"
+                  style="-fx-background-color: white; -fx-background-radius: 18px;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 10, 0, 0, 3);">
+                <Region style="-fx-background-color: #f97316; -fx-pref-height: 4px;
+                               -fx-background-radius: 18 18 0 0;"/>
+                <VBox spacing="14" style="-fx-padding: 18 20;">
+
+                    <!-- Ligne auteur + champ texte -->
+                    <HBox alignment="TOP_LEFT" spacing="14">
+                        <!-- Avatar auteur -->
+                        <StackPane minWidth="44" minHeight="44" maxWidth="44" maxHeight="44"
+                                   style="-fx-background-color: #f97316; -fx-background-radius: 50%;">
+                            <Label fx:id="lblCreateAvatar" text="M"
+                                   style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                            <ImageView fx:id="imgCreateAvatar" visible="false" managed="false"
+                                       fitWidth="44" fitHeight="44" preserveRatio="false">
+                                <clip><Circle centerX="22" centerY="22" radius="22"/></clip>
+                            </ImageView>
+                        </StackPane>
+
+                        <VBox spacing="10" HBox.hgrow="ALWAYS">
+                            <TextArea fx:id="taNewPost"
+                                      promptText="Quoi de neuf ? Partagez quelque chose avec la communauté LocalTrade..."
+                                      wrapText="true" prefRowCount="3"
+                                      style="-fx-background-color: #f8fafc; -fx-background-radius: 12px;
+                                             -fx-border-color: #e2e8f0; -fx-border-width: 1.5px;
+                                             -fx-border-radius: 12px; -fx-font-size: 13px;
+                                             -fx-padding: 12 14; -fx-pref-width: 999px;"/>
+
+                            <!-- Image preview -->
+                            <StackPane fx:id="imagePreviewPane" visible="false" managed="false"
+                                       maxHeight="200"
+                                       style="-fx-background-color: #f1f4f9; -fx-background-radius: 10px;
+                                              -fx-border-color: #e2e8f0; -fx-border-width: 1px;
+                                              -fx-border-radius: 10px;">
+                                <ImageView fx:id="imgPreview" fitHeight="180" preserveRatio="true"
+                                           smooth="true" style="-fx-background-radius: 10px;"/>
+                                <Button text="✕" onAction="#handleRemoveImage"
+                                        StackPane.alignment="TOP_RIGHT"
+                                        style="-fx-background-color: rgba(0,0,0,0.5); -fx-text-fill: white;
+                                               -fx-background-radius: 50%; -fx-font-size: 11px;
+                                               -fx-padding: 3 7; -fx-cursor: hand;">
+                                    <StackPane.margin><Insets top="6" right="6"/></StackPane.margin>
+                                </Button>
+                            </StackPane>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Barre actions bas -->
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <Button text="🖼️  Photo" onAction="#handleAddImage"
+                                style="-fx-background-color: #eff6ff; -fx-text-fill: #3b82f6;
+                                       -fx-font-size: 12px; -fx-font-weight: bold;
+                                       -fx-background-radius: 8px; -fx-padding: 8 16; -fx-cursor: hand;
+                                       -fx-border-color: #bfdbfe; -fx-border-width: 1px; -fx-border-radius: 8px;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="lblCharCount" text="0 / 500"
+                               style="-fx-font-size: 11px; -fx-text-fill: #94a3b8;"/>
+                        <Button text="Publier  →" onAction="#handlePublier"
+                                style="-fx-background-color: #f97316; -fx-text-fill: white;
+                                       -fx-font-size: 13px; -fx-font-weight: bold;
+                                       -fx-background-radius: 10px; -fx-padding: 10 22; -fx-cursor: hand;
+                                       -fx-effect: dropshadow(gaussian,rgba(249,115,22,0.4),8,0,0,3);"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+
+            <!-- ══ Filtre / tri ══ -->
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Publications" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="Trier :" style="-fx-font-size: 12px; -fx-text-fill: #94a3b8;"/>
+                <Button fx:id="btnTriRecent" text="🕐 Récents" onAction="#trierRecents"
+                        style="-fx-background-color: #1e3a5f; -fx-text-fill: white;
+                               -fx-font-size: 11px; -fx-background-radius: 8px;
+                               -fx-padding: 6 14; -fx-cursor: hand;"/>
+                <Button text="❤️ Populaires" onAction="#trierPopulaires"
+                        style="-fx-background-color: #f1f4f9; -fx-text-fill: #64748b;
+                               -fx-font-size: 11px; -fx-background-radius: 8px;
+                               -fx-padding: 6 14; -fx-cursor: hand;"/>
+            </HBox>
+
+            <!-- ══ Feed des publications ══ -->
+            <VBox fx:id="feedBox" spacing="16"
+                  style="-fx-background-color: transparent;"/>
+
+        </VBox>
+    </ScrollPane>
+</VBox>
