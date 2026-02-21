@@ -1,224 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.text.Font?>
 
-<StackPane xmlns="http://javafx.com/javafx/17"
-           xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="Controller.AfficherUser"
-           style="-fx-background-color: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);">
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="Controller.AfficherUser"
+      spacing="20" style="-fx-background-color: transparent;">
 
-    <!-- Conteneur principal -->
-    <VBox spacing="0" alignment="CENTER" maxWidth="1100" maxHeight="750"
-          style="-fx-background-color: white;
-                 -fx-background-radius: 25px;
-                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 25, 0, 0, 8);">
-
-        <!-- En-tête -->
-        <VBox alignment="CENTER" spacing="12"
-              style="-fx-background-color: linear-gradient(to right, #2563eb, #3b82f6);
-                     -fx-background-radius: 25 25 0 0;
-                     -fx-padding: 32 25 32 25;">
-
-            <Label text="📊" style="-fx-font-size: 48px;"/>
-
-            <Label text="Liste des Utilisateurs"
-                   style="-fx-font-family: 'Poppins', 'Montserrat', sans-serif;
-                          -fx-font-size: 30px;
-                          -fx-font-weight: bold;
-                          -fx-text-fill: white;"/>
-
-            <Label fx:id="countLabel"
-                   text="0 utilisateur(s)"
-                   style="-fx-font-family: 'Roboto', 'Open Sans', sans-serif;
-                          -fx-font-size: 14px;
-                          -fx-text-fill: rgba(255,255,255,0.9);"/>
+    <!-- Titre + barre actions -->
+    <HBox alignment="CENTER_LEFT" spacing="12">
+        <VBox spacing="3">
+            <Label text="Gestion des Utilisateurs"
+                   style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+            <Label text="Fournisseurs et Entrepreneurs inscrits sur la plateforme"
+                   style="-fx-font-size: 12px; -fx-text-fill: #94a3b8;"/>
         </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="⟳  Actualiser" onAction="#handleRefresh"
+                style="-fx-background-color: white; -fx-text-fill: #1e293b;
+                       -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 10px;
+                       -fx-cursor: hand; -fx-padding: 10 18; -fx-border-color: #e5e9f0;
+                       -fx-border-width: 1.5px; -fx-border-radius: 10px;"/>
+    </HBox>
 
-        <!-- Zone de recherche et actions -->
-        <VBox spacing="22" alignment="CENTER">
-            <padding>
-                <Insets top="28" right="35" bottom="15" left="35"/>
-            </padding>
+    <!-- Carte principale -->
+    <VBox spacing="0" VBox.vgrow="ALWAYS"
+          style="-fx-background-color: white; -fx-background-radius: 16px;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 10, 0, 0, 3);">
 
-            <!-- Barre de recherche -->
-            <HBox spacing="12" alignment="CENTER">
-                <Label text="🔍" style="-fx-font-size: 22px;"/>
+        <!-- Top bar : bande bleu marine + titre card -->
+        <Region style="-fx-background-color: #1e3a5f; -fx-background-radius: 16 16 0 0; -fx-pref-height: 4px;"/>
 
-                <TextField fx:id="searchField"
-                           promptText="Rechercher par nom, email ou rôle..."
-                           style="-fx-pref-width: 600px;
-                                  -fx-pref-height: 45px;
-                                  -fx-background-color: #f8fafc;
-                                  -fx-background-radius: 25px;
-                                  -fx-border-color: #2563eb;
-                                  -fx-border-width: 2px;
-                                  -fx-border-radius: 25px;
-                                  -fx-font-family: 'Roboto', 'Open Sans', sans-serif;
-                                  -fx-font-size: 15px;
-                                  -fx-padding: 12 25 12 25;"/>
+        <HBox alignment="CENTER_LEFT" spacing="16" style="-fx-padding: 16 22 14 22;">
+            <!-- Recherche -->
+            <HBox alignment="CENTER_LEFT" spacing="8"
+                  style="-fx-background-color: #f8fafc; -fx-background-radius: 22px;
+                         -fx-border-color: #e2e8f0; -fx-border-width: 1.5px; -fx-border-radius: 22px;
+                         -fx-padding: 0 14;">
+                <Label text="🔍" style="-fx-font-size: 13px; -fx-text-fill: #94a3b8;"/>
+                <TextField fx:id="searchField" promptText="Rechercher par nom, email ou rôle..."
+                           style="-fx-pref-width: 320px; -fx-pref-height: 38px;
+                                  -fx-background-color: transparent; -fx-border-color: transparent;
+                                  -fx-font-size: 13px;"/>
             </HBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="countLabel" text="0 utilisateur(s)"
+                   style="-fx-font-size: 12px; -fx-text-fill: #64748b;
+                          -fx-background-color: #f1f5f9; -fx-padding: 6 16;
+                          -fx-background-radius: 20px;"/>
+        </HBox>
 
-            <!-- TableView -->
-            <TableView fx:id="userTable"
-                       prefWidth="1020"
-                       prefHeight="380"
-                       style="-fx-background-color: transparent;
-                              -fx-background-radius: 15px;
-                              -fx-border-color: #e2e8f0;
-                              -fx-border-width: 2px;
-                              -fx-border-radius: 15px;
-                              -fx-font-family: 'Roboto', 'Open Sans', sans-serif;">
+        <Region style="-fx-background-color: #f1f5f9; -fx-pref-height: 1px;"/>
 
-                <columns>
-                    <TableColumn fx:id="colId"
-                                 text="🆔 ID"
-                                 prefWidth="70"
-                                 style="-fx-alignment: CENTER;
-                                        -fx-font-family: 'Poppins', 'Montserrat', sans-serif;
-                                        -fx-font-weight: bold;
-                                        -fx-font-size: 13px;"/>
-
-                    <TableColumn fx:id="colNom"
-                                 text="👤 Nom"
-                                 prefWidth="200"
-                                 style="-fx-font-family: 'Poppins', 'Montserrat', sans-serif;
-                                        -fx-font-weight: bold;
-                                        -fx-font-size: 13px;"/>
-
-                    <TableColumn fx:id="colEmail"
-                                 text="📧 Email"
-                                 prefWidth="240"
-                                 style="-fx-font-family: 'Poppins', 'Montserrat', sans-serif;
-                                        -fx-font-weight: bold;
-                                        -fx-font-size: 13px;"/>
-
-                    <TableColumn fx:id="colMotDePasse"
-                                 text="🔒 Mot de passe"
-                                 prefWidth="220"
-                                 style="-fx-font-family: 'Poppins', 'Montserrat', sans-serif;
-                                        -fx-font-weight: bold;
-                                        -fx-font-size: 13px;"/>
-
-                    <TableColumn fx:id="colRole"
-                                 text="⭐ Rôle"
-                                 prefWidth="260"
-                                 style="-fx-alignment: CENTER;
-                                        -fx-font-family: 'Poppins', 'Montserrat', sans-serif;
-                                        -fx-font-weight: bold;
-                                        -fx-font-size: 13px;"/>
-                </columns>
-
-                <placeholder>
-                    <VBox alignment="CENTER" spacing="15">
-                        <Label text="📭" style="-fx-font-size: 56px;"/>
-                        <Label text="Aucun utilisateur trouvé"
-                               style="-fx-font-family: 'Roboto', 'Open Sans', sans-serif;
-                                      -fx-font-size: 18px;
-                                      -fx-text-fill: #94a3b8;"/>
-                        <Label text="Ajoutez votre premier utilisateur"
-                               style="-fx-font-family: 'Roboto', 'Open Sans', sans-serif;
-                                      -fx-font-size: 14px;
-                                      -fx-text-fill: #cbd5e1;"/>
-                    </VBox>
-                </placeholder>
-            </TableView>
-
-            <!-- Boutons d'action -->
-            <VBox spacing="12" alignment="CENTER">
-                <padding>
-                    <Insets top="12" bottom="22"/>
-                </padding>
-
-                <!-- Ligne 1: Actions principales -->
-                <HBox spacing="15" alignment="CENTER">
-                    <Button text="◀ Retour"
-                            onAction="#handleBack"
-                            style="-fx-background-color: #64748b;
-                                   -fx-text-fill: white;
-                                   -fx-font-family: 'Poppins', 'Montserrat', sans-serif;
-                                   -fx-font-weight: bold;
-                                   -fx-font-size: 14px;
-                                   -fx-padding: 13 32 13 32;
-                                   -fx-background-radius: 12px;
-                                   -fx-cursor: hand;
-                                   -fx-effect: dropshadow(gaussian, rgba(100, 116, 139, 0.4), 10, 0, 0, 4);">
-                        <font>
-                            <Font name="Poppins Bold" size="14"/>
-                        </font>
-                    </Button>
-
-                    <Button text="✏️ Modifier"
-                            onAction="#handleModify"
-                            style="-fx-background-color: linear-gradient(to right, #f97316, #fb923c);
-                                   -fx-text-fill: white;
-                                   -fx-font-family: 'Poppins', 'Montserrat', sans-serif;
-                                   -fx-font-weight: bold;
-                                   -fx-font-size: 14px;
-                                   -fx-padding: 13 32 13 32;
-                                   -fx-background-radius: 12px;
-                                   -fx-cursor: hand;
-                                   -fx-effect: dropshadow(gaussian, rgba(249, 115, 22, 0.4), 10, 0, 0, 4);">
-                        <font>
-                            <Font name="Poppins Bold" size="14"/>
-                        </font>
-                    </Button>
-
-                    <Button text="🔄 Rafraîchir"
-                            onAction="#handleRefresh"
-                            style="-fx-background-color: linear-gradient(to right, #2563eb, #3b82f6);
-                                   -fx-text-fill: white;
-                                   -fx-font-family: 'Poppins', 'Montserrat', sans-serif;
-                                   -fx-font-weight: bold;
-                                   -fx-font-size: 14px;
-                                   -fx-padding: 13 32 13 32;
-                                   -fx-background-radius: 12px;
-                                   -fx-cursor: hand;
-                                   -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.4), 10, 0, 0, 4);">
-                        <font>
-                            <Font name="Poppins Bold" size="14"/>
-                        </font>
-                    </Button>
-
-                    <Button text="🗑️ Supprimer"
-                            onAction="#handleDelete"
-                            style="-fx-background-color: linear-gradient(to right, #dc2626, #ef4444);
-                                   -fx-text-fill: white;
-                                   -fx-font-family: 'Poppins', 'Montserrat', sans-serif;
-                                   -fx-font-weight: bold;
-                                   -fx-font-size: 14px;
-                                   -fx-padding: 13 32 13 32;
-                                   -fx-background-radius: 12px;
-                                   -fx-cursor: hand;
-                                   -fx-effect: dropshadow(gaussian, rgba(220, 38, 38, 0.4), 10, 0, 0, 4);">
-                        <font>
-                            <Font name="Poppins Bold" size="14"/>
-                        </font>
-                    </Button>
-                </HBox>
-
-                <!-- Ligne 2: Gérer les rôles -->
-                <Button text="⭐ Gérer les Rôles"
-                        onAction="#handleManageRoles"
-                        style="-fx-background-color: linear-gradient(to right, #10b981, #059669);
-                               -fx-text-fill: white;
-                               -fx-font-family: 'Poppins', 'Montserrat', sans-serif;
-                               -fx-font-weight: bold;
-                               -fx-font-size: 14px;
-                               -fx-padding: 12 40 12 40;
-                               -fx-background-radius: 12px;
-                               -fx-cursor: hand;
-                               -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 10, 0, 0, 4);">
-                    <font>
-                        <Font name="Poppins Bold" size="14"/>
-                    </font>
-                </Button>
-            </VBox>
-
-        </VBox>
-
+        <!-- TableView -->
+        <TableView fx:id="userTable" VBox.vgrow="ALWAYS"
+                   style="-fx-background-color: transparent; -fx-border-color: transparent;
+                          -fx-table-cell-border-color: #f1f5f9; -fx-font-size: 13px;">
+            <columns>
+                <TableColumn fx:id="colId"         text="#"               prefWidth="55"  style="-fx-alignment: CENTER;"/>
+                <TableColumn fx:id="colNomComplet"  text="Nom complet"    prefWidth="180"/>
+                <TableColumn fx:id="colEmail"       text="Email"           prefWidth="210"/>
+                <TableColumn fx:id="colDDN"         text="Naissance"       prefWidth="120" style="-fx-alignment: CENTER;"/>
+                <TableColumn fx:id="colRole"        text="Rôle"            prefWidth="130" style="-fx-alignment: CENTER;"/>
+                <TableColumn fx:id="colMotDePasse"  text="Mot de passe"    prefWidth="180"/>
+                <TableColumn fx:id="colActions"     text="Actions"         prefWidth="220" style="-fx-alignment: CENTER;"/>
+            </columns>
+            <placeholder>
+                <VBox alignment="CENTER" spacing="10">
+                    <Label text="📭" style="-fx-font-size: 44px;"/>
+                    <Label text="Aucun utilisateur trouvé"
+                           style="-fx-font-size: 15px; -fx-text-fill: #94a3b8;"/>
+                    <Label text="Ajoutez des fournisseurs ou entrepreneurs via le formulaire d'inscription."
+                           style="-fx-font-size: 12px; -fx-text-fill: #cbd5e1;"/>
+                </VBox>
+            </placeholder>
+        </TableView>
     </VBox>
-
-</StackPane>
+</VBox>

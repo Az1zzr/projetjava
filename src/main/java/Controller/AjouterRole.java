@@ -3,347 +3,166 @@ package Controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import models.Role;
 import services.RoleService;
 
-import java.io.IOException;
-
+/**
+ * Controller Gestion Rôles — intégré dans MainLayout.
+ * Bouton "Retour" standalone supprimé (navigation via sidebar).
+ */
 public class AjouterRole {
 
-    @FXML
-    private TextField nomRoleField;
+    @FXML private TextField        nomRoleField;
+    @FXML private TableView<Role>  roleTable;
+    @FXML private TableColumn<Role,Integer> colId;
+    @FXML private TableColumn<Role,String>  colNom;
+    @FXML private TableColumn<Role,Void>    colActions;
+    @FXML private Label            countLabel;
 
-    @FXML
-    private TableView<Role> roleTable;
+    private final RoleService service = new RoleService();
+    private final ObservableList<Role> roles = FXCollections.observableArrayList();
 
-    @FXML
-    private TableColumn<Role, Integer> colId;
-
-    @FXML
-    private TableColumn<Role, String> colNom;
-
-    @FXML
-    private TableColumn<Role, Void> colActions;
-
-    @FXML
-    private Label countLabel;
-
-    private RoleService service = new RoleService();
-    private ObservableList<Role> roles = FXCollections.observableArrayList();
-
-    @FXML
-    public void initialize() {
-        // Configuration des colonnes
+    @FXML public void initialize() {
         colId.setCellValueFactory(new PropertyValueFactory<>("id_role"));
-        colNom.setCellValueFactory(new PropertyValueFactory<>("nomRole"));
-
-        // Style des colonnes
         colId.setStyle("-fx-alignment: CENTER; -fx-font-size: 13px;");
-        colNom.setStyle("-fx-font-size: 14px; -fx-padding: 10;");
+        colNom.setCellValueFactory(new PropertyValueFactory<>("nomRole"));
+        colNom.setStyle("-fx-font-size: 13px; -fx-padding: 8;");
 
-        // Colonne Actions avec boutons
         setupActionsColumn();
-
-        // Charger les rôles
-        loadRoles();
-
-        // Validation en temps réel
         setupValidation();
+        loadRoles();
     }
 
-    // Configuration de la colonne Actions avec boutons Modifier et Supprimer
+    // ─── Colonne actions ─────────────────────────────────────────────────────
     private void setupActionsColumn() {
-        colActions.setCellFactory(column -> new TableCell<>() {
-            private final Button modifyBtn = new Button("✏️ Modifier");
-            private final Button deleteBtn = new Button("🗑️");
-            private final HBox container = new HBox(8);
-
+        colActions.setCellFactory(col -> new TableCell<>() {
+            private final Button modBtn = new Button("✏️ Modifier");
+            private final Button delBtn = new Button("🗑️ Supprimer");
+            private final HBox box = new HBox(8, modBtn, delBtn);
             {
-                // Style du bouton Modifier (Orange)
-                modifyBtn.setStyle(
-                        "-fx-background-color: linear-gradient(to right, #f97316, #fb923c); " +
-                                "-fx-text-fill: white; " +
-                                "-fx-font-family: 'Poppins', sans-serif; " +
-                                "-fx-font-weight: bold; " +
-                                "-fx-font-size: 11px; " +
-                                "-fx-padding: 6 14 6 14; " +
-                                "-fx-background-radius: 8px; " +
-                                "-fx-cursor: hand;"
-                );
-
-                // Style du bouton Supprimer (Rouge)
-                deleteBtn.setStyle(
-                        "-fx-background-color: linear-gradient(to right, #dc2626, #ef4444); " +
-                                "-fx-text-fill: white; " +
-                                "-fx-font-size: 13px; " +
-                                "-fx-padding: 6 10 6 10; " +
-                                "-fx-background-radius: 8px; " +
-                                "-fx-cursor: hand;"
-                );
-
-                // Actions
-                modifyBtn.setOnAction(event -> {
-                    Role role = getTableView().getItems().get(getIndex());
-                    modifyRole(role);
-                });
-
-                deleteBtn.setOnAction(event -> {
-                    Role role = getTableView().getItems().get(getIndex());
-                    deleteRole(role);
-                });
-
-                container.setAlignment(Pos.CENTER);
-                container.getChildren().addAll(modifyBtn, deleteBtn);
+                box.setAlignment(Pos.CENTER);
+                modBtn.setStyle(
+                        "-fx-background-color: #1e3a5f; -fx-text-fill: white; " +
+                                "-fx-font-size: 11px; -fx-font-weight: bold; " +
+                                "-fx-background-radius: 8px; -fx-padding: 6 14; -fx-cursor: hand;");
+                delBtn.setStyle(
+                        "-fx-background-color: #dc2626; -fx-text-fill: white; " +
+                                "-fx-font-size: 11px; -fx-font-weight: bold; " +
+                                "-fx-background-radius: 8px; -fx-padding: 6 14; -fx-cursor: hand;");
+                modBtn.setOnAction(e -> modifyRole(getTableView().getItems().get(getIndex())));
+                delBtn.setOnAction(e -> deleteRole(getTableView().getItems().get(getIndex())));
             }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
+            @Override protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(container);
-                }
+                setGraphic(empty ? null : box);
             }
         });
     }
 
-    // Ajouter un rôle
-    @FXML
-    public void ajouterRole() {
-        String nomRole = nomRoleField.getText().trim();
-
-        // Validation
-        if (nomRole.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Erreur de validation",
-                    "⚠️ Le nom du rôle est obligatoire !");
-            nomRoleField.setStyle("-fx-border-color: #dc2626; -fx-border-width: 2px;");
-            return;
+    // ─── Ajouter ─────────────────────────────────────────────────────────────
+    @FXML public void ajouterRole() {
+        String nom = nomRoleField.getText().trim();
+        if (nom.isEmpty()) { showAlert(Alert.AlertType.ERROR, "Erreur", "⚠️ Le nom du rôle est obligatoire !"); return; }
+        if (nom.length() < 3) { showAlert(Alert.AlertType.ERROR, "Erreur", "⚠️ Minimum 3 caractères !"); return; }
+        if (roles.stream().anyMatch(r -> r.getNomRole().equalsIgnoreCase(nom))) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "⚠️ Ce rôle existe déjà !"); return;
         }
-
-        if (nomRole.length() < 3) {
-            showAlert(Alert.AlertType.ERROR, "Erreur de validation",
-                    "⚠️ Le nom du rôle doit contenir au moins 3 caractères !");
-            nomRoleField.setStyle("-fx-border-color: #dc2626; -fx-border-width: 2px;");
-            return;
-        }
-
-        // Vérifier les doublons
-        boolean exists = roles.stream()
-                .anyMatch(r -> r.getNomRole().equalsIgnoreCase(nomRole));
-
-        if (exists) {
-            showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "⚠️ Ce rôle existe déjà !");
-            nomRoleField.setStyle("-fx-border-color: #dc2626; -fx-border-width: 2px;");
-            return;
-        }
-
         try {
-            Role r = new Role();
-            r.setNomRole(nomRole);
+            Role r = new Role(); r.setNomRole(nom);
             service.add(r);
-
             loadRoles();
-            nomRoleField.clear();
-            nomRoleField.setStyle("");
-
-            showAlert(Alert.AlertType.INFORMATION, "Succès",
-                    "✅ Rôle '" + nomRole + "' ajouté avec succès !");
-
+            nomRoleField.clear(); nomRoleField.setStyle("");
+            showAlert(Alert.AlertType.INFORMATION, "Succès", "✅ Rôle '" + nom + "' ajouté !");
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "❌ Erreur lors de l'ajout : " + e.getMessage());
-            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "❌ " + e.getMessage());
         }
     }
 
-    // Modifier un rôle
+    // ─── Modifier ────────────────────────────────────────────────────────────
     private void modifyRole(Role role) {
-        // Créer une boîte de dialogue
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Modifier le rôle");
-        dialog.setHeaderText("Modifier : " + role.getNomRole());
+        dialog.setHeaderText("✏️  Modifier : " + role.getNomRole());
+        ButtonType save = new ButtonType("💾 Enregistrer", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(save, ButtonType.CANCEL);
 
-        // Boutons
-        ButtonType saveButtonType = new ButtonType("💾 Enregistrer", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
-
-        // Champ de texte
-        TextField textField = new TextField(role.getNomRole());
-        textField.setPromptText("Nom du rôle");
-        textField.setStyle(
-                "-fx-pref-width: 300px; " +
-                        "-fx-pref-height: 40px; " +
-                        "-fx-font-family: 'Roboto', sans-serif; " +
-                        "-fx-font-size: 14px;"
-        );
+        TextField tf = new TextField(role.getNomRole());
+        tf.setStyle("-fx-pref-width: 300px; -fx-pref-height: 40px; -fx-font-size: 14px; " +
+                "-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; " +
+                "-fx-border-width: 1.5px; -fx-border-radius: 8px; -fx-background-radius: 8px;");
 
         javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(10);
-        content.getChildren().add(new Label("Nouveau nom :"));
-        content.getChildren().add(textField);
+        content.getChildren().addAll(new Label("Nouveau nom :"), tf);
+        content.setPadding(new javafx.geometry.Insets(16));
         dialog.getDialogPane().setContent(content);
-
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == saveButtonType) {
-                return textField.getText().trim();
-            }
-            return null;
-        });
+        dialog.setResultConverter(btn -> btn == save ? tf.getText().trim() : null);
 
         dialog.showAndWait().ifPresent(newName -> {
-            if (newName.isEmpty() || newName.length() < 3) {
-                showAlert(Alert.AlertType.ERROR, "Erreur",
-                        "⚠️ Le nom doit contenir au moins 3 caractères !");
-                return;
-            }
-
+            if (newName.length() < 3) { showAlert(Alert.AlertType.ERROR, "Erreur", "⚠️ Minimum 3 caractères !"); return; }
             try {
-                role.setNomRole(newName);
-                service.update(role);
+                role.setNomRole(newName); service.update(role);
                 loadRoles();
-                showAlert(Alert.AlertType.INFORMATION, "Succès",
-                        "✅ Rôle modifié avec succès !");
-            } catch (Exception e) {
-                showAlert(Alert.AlertType.ERROR, "Erreur",
-                        "❌ Erreur lors de la modification : " + e.getMessage());
+                showAlert(Alert.AlertType.INFORMATION, "Succès", "✅ Rôle modifié !");
+            } catch (Exception e) { showAlert(Alert.AlertType.ERROR, "Erreur", "❌ " + e.getMessage()); }
+        });
+    }
+
+    // ─── Supprimer ───────────────────────────────────────────────────────────
+    private void deleteRole(Role role) {
+        Alert conf = new Alert(Alert.AlertType.CONFIRMATION);
+        conf.setTitle("Confirmation"); conf.setHeaderText("Supprimer le rôle");
+        conf.setContentText("Supprimer le rôle « " + role.getNomRole() + " » ?");
+        conf.showAndWait().ifPresent(btn -> {
+            if (btn == ButtonType.OK) {
+                try {
+                    service.delete(role); roles.remove(role); updateCount();
+                    showAlert(Alert.AlertType.INFORMATION, "Succès", "✅ Rôle supprimé !");
+                } catch (Exception e) { showAlert(Alert.AlertType.ERROR, "Erreur", "❌ " + e.getMessage()); }
             }
         });
     }
 
-    // Supprimer un rôle
-    private void deleteRole(Role role) {
-        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmation.setTitle("Confirmation");
-        confirmation.setHeaderText("Supprimer le rôle");
-        confirmation.setContentText("Êtes-vous sûr de vouloir supprimer le rôle '" +
-                role.getNomRole() + "' ?");
+    // ─── Depuis boutons barre ─────────────────────────────────────────────────
+    @FXML private void handleRefresh() { loadRoles(); }
 
-        if (confirmation.showAndWait().get() == ButtonType.OK) {
-            try {
-                service.delete(role);
-                roles.remove(role);
-                updateCountLabel();
-                showAlert(Alert.AlertType.INFORMATION, "Succès",
-                        "✅ Rôle supprimé avec succès !");
-            } catch (Exception e) {
-                showAlert(Alert.AlertType.ERROR, "Erreur",
-                        "❌ Erreur lors de la suppression : " + e.getMessage());
-            }
-        }
+    @FXML private void handleModify() {
+        Role sel = roleTable.getSelectionModel().getSelectedItem();
+        if (sel == null) { showAlert(Alert.AlertType.WARNING, "Sélection", "⚠️ Sélectionnez un rôle à modifier."); return; }
+        modifyRole(sel);
     }
 
-    // Charger les rôles depuis la BD
+    @FXML private void handleDelete() {
+        Role sel = roleTable.getSelectionModel().getSelectedItem();
+        if (sel == null) { showAlert(Alert.AlertType.WARNING, "Sélection", "⚠️ Sélectionnez un rôle à supprimer."); return; }
+        deleteRole(sel);
+    }
+
+    // ─── Helpers ──────────────────────────────────────────────────────────────
     private void loadRoles() {
         try {
-            roles.clear();
-            roles.addAll(service.getAll());
-            roleTable.setItems(roles);
-            updateCountLabel();
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "❌ Erreur lors du chargement : " + e.getMessage());
-            e.printStackTrace();
-        }
+            roles.clear(); roles.addAll(service.getAll());
+            roleTable.setItems(roles); updateCount();
+        } catch (Exception e) { showAlert(Alert.AlertType.ERROR, "Erreur", "❌ Chargement : " + e.getMessage()); }
     }
 
-    // Actualiser la liste
-    @FXML
-    private void handleRefresh() {
-        loadRoles();
-        showAlert(Alert.AlertType.INFORMATION, "Actualisation",
-                "✅ Liste mise à jour avec succès !");
+    private void updateCount() {
+        if (countLabel != null) countLabel.setText(roles.size() + " rôle(s)");
     }
 
-    // Modifier (depuis le bouton principal)
-    @FXML
-    private void handleModify() {
-        Role selectedRole = roleTable.getSelectionModel().getSelectedItem();
-
-        if (selectedRole == null) {
-            showAlert(Alert.AlertType.WARNING, "Aucune sélection",
-                    "⚠️ Veuillez sélectionner un rôle à modifier.");
-            return;
-        }
-
-        modifyRole(selectedRole);
-    }
-
-    // Supprimer (depuis le bouton principal)
-    @FXML
-    private void handleDelete() {
-        Role selectedRole = roleTable.getSelectionModel().getSelectedItem();
-
-        if (selectedRole == null) {
-            showAlert(Alert.AlertType.WARNING, "Aucune sélection",
-                    "⚠️ Veuillez sélectionner un rôle à supprimer.");
-            return;
-        }
-
-        deleteRole(selectedRole);
-    }
-
-    // Retourner à la page d'ajout d'utilisateur
-    @FXML
-    private void handleBackToUsers() {
-        try {
-            // Charger la page d'ajout d'utilisateur
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/user.fxml"));
-            Parent root = loader.load();
-
-            // Obtenir la scène actuelle
-            Scene scene = nomRoleField.getScene();
-
-            // Changer la vue de la scène actuelle
-            scene.setRoot(root);
-
-        } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible de retourner à la gestion des utilisateurs : " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    // Mettre à jour le compteur
-    private void updateCountLabel() {
-        if (countLabel != null) {
-            countLabel.setText(roles.size() + " rôle(s)");
-        }
-    }
-
-    // Validation en temps réel
     private void setupValidation() {
-        nomRoleField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.trim().isEmpty()) {
-                nomRoleField.setStyle("");
-            } else if (newValue.trim().length() < 3) {
-                nomRoleField.setStyle("-fx-border-color: #f97316; -fx-border-width: 2px;");
-            } else {
-                nomRoleField.setStyle("-fx-border-color: #10b981; -fx-border-width: 2px;");
-            }
+        nomRoleField.textProperty().addListener((o, ov, nv) -> {
+            if (nv.trim().isEmpty()) nomRoleField.setStyle("");
+            else if (nv.trim().length() < 3) nomRoleField.setStyle("-fx-border-color: #f97316; -fx-border-width: 2px; -fx-border-radius: 10px;");
+            else nomRoleField.setStyle("-fx-border-color: #10b981; -fx-border-width: 2px; -fx-border-radius: 10px;");
         });
     }
 
-    // Afficher une alerte
     private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.setStyle(
-                "-fx-font-family: 'Roboto', 'Open Sans', sans-serif; " +
-                        "-fx-font-size: 14px;"
-        );
-
-        alert.showAndWait();
+        Alert a = new Alert(type); a.setTitle(title); a.setHeaderText(null); a.setContentText(content);
+        a.getDialogPane().setStyle("-fx-font-size: 13px;"); a.showAndWait();
     }
 }

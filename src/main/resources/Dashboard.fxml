@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="Controller.DashboardController"
+      spacing="22" style="-fx-background-color: transparent;">
+
+    <!-- Titre + date -->
+    <HBox alignment="CENTER_LEFT">
+        <VBox spacing="3">
+            <Label text="Vue d'ensemble"
+                   style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+            <Label fx:id="lblDate" text="Aujourd'hui"
+                   style="-fx-font-size: 13px; -fx-text-fill: #94a3b8;"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="⟳  Actualiser" onAction="#handleRefresh"
+                style="-fx-background-color: white; -fx-text-fill: #1e293b;
+                       -fx-font-size: 13px; -fx-font-weight: bold;
+                       -fx-background-radius: 10px; -fx-cursor: hand;
+                       -fx-padding: 10 20; -fx-border-color: #e5e9f0;
+                       -fx-border-width: 1.5px; -fx-border-radius: 10px;"/>
+    </HBox>
+
+    <!-- ══ STATS CARDS ══ -->
+    <HBox spacing="16">
+
+        <!-- Utilisateurs — bleu marine -->
+        <VBox spacing="0" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: white; -fx-background-radius: 16px;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 10, 0, 0, 3);">
+            <Region style="-fx-background-color: #1e3a5f; -fx-background-radius: 16 16 0 0; -fx-pref-height: 4px;"/>
+            <VBox spacing="12" style="-fx-padding: 18 20 18 20;">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Label text="👤"
+                           style="-fx-font-size: 20px; -fx-background-color: #eff6ff;
+                                  -fx-background-radius: 10px; -fx-padding: 9 11;"/>
+                    <Label text="Utilisateurs" style="-fx-font-size: 12px; -fx-text-fill: #64748b;"/>
+                </HBox>
+                <Label fx:id="lblTotalUsers" text="—"
+                       style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                <HBox spacing="5">
+                    <Label text="↑" style="-fx-text-fill: #10b981; -fx-font-weight: bold;"/>
+                    <Label text="Total enregistrés" style="-fx-font-size: 11px; -fx-text-fill: #94a3b8;"/>
+                </HBox>
+            </VBox>
+        </VBox>
+
+        <!-- Produits — orange LocalTrade -->
+        <VBox spacing="0" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: white; -fx-background-radius: 16px;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 10, 0, 0, 3);">
+            <Region style="-fx-background-color: #f97316; -fx-background-radius: 16 16 0 0; -fx-pref-height: 4px;"/>
+            <VBox spacing="12" style="-fx-padding: 18 20 18 20;">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Label text="📦"
+                           style="-fx-font-size: 20px; -fx-background-color: #fff7ed;
+                                  -fx-background-radius: 10px; -fx-padding: 9 11;"/>
+                    <Label text="Produits" style="-fx-font-size: 12px; -fx-text-fill: #64748b;"/>
+                </HBox>
+                <Label fx:id="lblTotalProduits" text="—"
+                       style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                <HBox spacing="5">
+                    <Label text="●" style="-fx-text-fill: #f97316; -fx-font-size: 10px;"/>
+                    <Label text="En catalogue" style="-fx-font-size: 11px; -fx-text-fill: #94a3b8;"/>
+                </HBox>
+            </VBox>
+        </VBox>
+
+        <!-- Commandes — vert -->
+        <VBox spacing="0" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: white; -fx-background-radius: 16px;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 10, 0, 0, 3);">
+            <Region style="-fx-background-color: #10b981; -fx-background-radius: 16 16 0 0; -fx-pref-height: 4px;"/>
+            <VBox spacing="12" style="-fx-padding: 18 20 18 20;">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Label text="🛍️"
+                           style="-fx-font-size: 20px; -fx-background-color: #f0fdf4;
+                                  -fx-background-radius: 10px; -fx-padding: 9 11;"/>
+                    <Label text="Commandes" style="-fx-font-size: 12px; -fx-text-fill: #64748b;"/>
+                </HBox>
+                <Label fx:id="lblTotalCommandes" text="—"
+                       style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                <HBox spacing="5">
+                    <Label text="↑" style="-fx-text-fill: #10b981; -fx-font-weight: bold;"/>
+                    <Label text="Ce mois" style="-fx-font-size: 11px; -fx-text-fill: #94a3b8;"/>
+                </HBox>
+            </VBox>
+        </VBox>
+
+        <!-- Feedback — violet -->
+        <VBox spacing="0" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: white; -fx-background-radius: 16px;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 10, 0, 0, 3);">
+            <Region style="-fx-background-color: #8b5cf6; -fx-background-radius: 16 16 0 0; -fx-pref-height: 4px;"/>
+            <VBox spacing="12" style="-fx-padding: 18 20 18 20;">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Label text="💬"
+                           style="-fx-font-size: 20px; -fx-background-color: #faf5ff;
+                                  -fx-background-radius: 10px; -fx-padding: 9 11;"/>
+                    <Label text="Feedbacks" style="-fx-font-size: 12px; -fx-text-fill: #64748b;"/>
+                </HBox>
+                <Label fx:id="lblTotalFeedbacks" text="—"
+                       style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                <HBox spacing="5">
+                    <Label text="●" style="-fx-text-fill: #8b5cf6; -fx-font-size: 10px;"/>
+                    <Label text="Total reçus" style="-fx-font-size: 11px; -fx-text-fill: #94a3b8;"/>
+                </HBox>
+            </VBox>
+        </VBox>
+
+    </HBox>
+
+    <!-- ══ TABLEAU UTILISATEURS RÉCENTS ══ -->
+    <VBox spacing="0" VBox.vgrow="ALWAYS"
+          style="-fx-background-color: white; -fx-background-radius: 16px;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 10, 0, 0, 3);">
+
+        <HBox alignment="CENTER_LEFT" style="-fx-padding: 18 22 14 22;">
+            <VBox spacing="2">
+                <Label text="Utilisateurs récents"
+                       style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                <Label text="Derniers comptes créés sur la plateforme"
+                       style="-fx-font-size: 11px; -fx-text-fill: #94a3b8;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Voir tous →" onAction="#handleViewAllUsers"
+                    style="-fx-background-color: #fff7ed; -fx-text-fill: #f97316;
+                           -fx-font-size: 12px; -fx-font-weight: bold;
+                           -fx-background-radius: 8px; -fx-padding: 8 16; -fx-cursor: hand;"/>
+        </HBox>
+
+        <Region style="-fx-background-color: #f1f5f9; -fx-pref-height: 1px;"/>
+
+        <TableView fx:id="recentUsersTable" VBox.vgrow="ALWAYS"
+                   style="-fx-background-color: transparent; -fx-border-color: transparent;
+                          -fx-table-cell-border-color: #f1f5f9; -fx-font-size: 13px;">
+            <columns>
+                <TableColumn fx:id="colId"       text="#"              prefWidth="55"  style="-fx-alignment: CENTER;"/>
+                <TableColumn fx:id="colNomComplet" text="Nom complet"  prefWidth="195"/>
+                <TableColumn fx:id="colEmail"    text="Email"           prefWidth="230"/>
+                <TableColumn fx:id="colRole"     text="Rôle"            prefWidth="140" style="-fx-alignment: CENTER;"/>
+                <TableColumn fx:id="colDDN"      text="Date naissance"  prefWidth="150" style="-fx-alignment: CENTER;"/>
+            </columns>
+            <placeholder>
+                <Label text="Aucun utilisateur trouvé"
+                       style="-fx-text-fill: #94a3b8; -fx-font-size: 14px;"/>
+            </placeholder>
+        </TableView>
+    </VBox>
+</VBox>

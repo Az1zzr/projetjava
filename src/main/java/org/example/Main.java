@@ -1,46 +1,33 @@
 package org.example;
 
-import models.User;
 import models.Role;
-
-import services.IService;
+import models.User;
 import services.UserService;
 
-import utils.MyDB;
-
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
-        /*IService<User> service = new UserService();
-        Role role = new Role();
-        role.setId_role(11);
-
-        User p = new User(25, "Leao", "Rafael@gmail.com", "*********", role);
-
-
-        service.add(p);
-
-
-        System.out.println(service.getAll());*/
-        IService<User> service = new UserService();
+        // ✅ Utilise UserService directement — évite l'incompatibilité IService<User>
+        UserService service = new UserService();
 
         Role role = new Role();
-        role.setId_role(1); // assure-toi que 1 existe
+        role.setId_role(1);
 
         User u = new User();
-        u.setNom("Rafael");
+        u.setNom("Leao");
+        u.setPrenom("Rafael");
         u.setEmail("rafael@gmail.com");
         u.setMotDePasse("1234");
+        u.setDateNaissance(LocalDate.of(1999, 6, 15));
         u.setRole(role);
 
         service.add(u);
+        System.out.println("✅ Utilisateur ajouté !");
 
-        System.out.println(service.getAll());
-
-
-
-
+        System.out.println("\n📋 Liste :");
+        service.getAll().forEach(System.out::println);
     }
 }

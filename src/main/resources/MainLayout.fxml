@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="Controller.MainLayoutController"
+            prefWidth="1280" prefHeight="780"
+            style="-fx-background-color: #0d1b2e;">
+    <left>
+        <VBox prefWidth="252" spacing="0"
+              style="-fx-background-color: #0d1b2e; -fx-border-color: #1a2d47; -fx-border-width: 0 1 0 0;">
+
+            <!-- Logo -->
+            <HBox alignment="CENTER" style="-fx-padding: 18 16 12 16; -fx-background-color: #091422;">
+                <ImageView fitWidth="160" fitHeight="80" preserveRatio="true" smooth="true">
+                    <image><Image url="@/images/logo_localtrade.png"/></image>
+                </ImageView>
+            </HBox>
+
+            <!-- Badge ADMIN -->
+            <HBox alignment="CENTER" style="-fx-padding: 6 0 10 0; -fx-background-color: #091422;">
+                <Label fx:id="lblAdminBadge" text="● ADMINISTRATEUR"
+                       style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #f97316;
+                              -fx-background-color: rgba(249,115,22,0.1);
+                              -fx-background-radius: 20px; -fx-padding: 4 14;"/>
+            </HBox>
+
+            <Region style="-fx-background-color: #f97316; -fx-pref-height: 2px;"/>
+            <Region style="-fx-background-color: #1a2d47; -fx-pref-height: 1px;"/>
+
+            <!-- Menu -->
+            <VBox spacing="3" style="-fx-padding: 14 10 10 10;" VBox.vgrow="ALWAYS">
+
+                <Label text="NAVIGATION"
+                       style="-fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: #3a5070; -fx-padding: 4 8 4 8;"/>
+                <Button fx:id="btnDashboard" text="📊   Dashboard" maxWidth="Infinity" onAction="#showDashboard"
+                        style="-fx-background-color: #f97316; -fx-text-fill: white; -fx-font-size: 13px;
+                               -fx-font-weight: bold; -fx-alignment: CENTER_LEFT; -fx-padding: 12 16;
+                               -fx-background-radius: 10px; -fx-cursor: hand;"/>
+                <Button fx:id="btnUsers" text="👥   Utilisateurs" maxWidth="Infinity" onAction="#showUsers"
+                        style="-fx-background-color: transparent; -fx-text-fill: #7a9ab8; -fx-font-size: 13px;
+                               -fx-alignment: CENTER_LEFT; -fx-padding: 12 16; -fx-background-radius: 10px; -fx-cursor: hand;"/>
+                <Button fx:id="btnRoles" text="🎭   Rôles" maxWidth="Infinity" onAction="#showRoles"
+                        style="-fx-background-color: transparent; -fx-text-fill: #7a9ab8; -fx-font-size: 13px;
+                               -fx-alignment: CENTER_LEFT; -fx-padding: 12 16; -fx-background-radius: 10px; -fx-cursor: hand;"/>
+
+                <Label text="CATALOGUE"
+                       style="-fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: #3a5070; -fx-padding: 10 8 4 8;"/>
+                <Button fx:id="btnProduits" text="📦   Produits" maxWidth="Infinity" onAction="#showProduits"
+                        style="-fx-background-color: transparent; -fx-text-fill: #7a9ab8; -fx-font-size: 13px;
+                               -fx-alignment: CENTER_LEFT; -fx-padding: 12 16; -fx-background-radius: 10px; -fx-cursor: hand;"/>
+                <Button fx:id="btnFournisseurs" text="🏭   Fournisseurs" maxWidth="Infinity" onAction="#showFournisseurs"
+                        style="-fx-background-color: transparent; -fx-text-fill: #7a9ab8; -fx-font-size: 13px;
+                               -fx-alignment: CENTER_LEFT; -fx-padding: 12 16; -fx-background-radius: 10px; -fx-cursor: hand;"/>
+
+                <Label text="OPÉRATIONS"
+                       style="-fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: #3a5070; -fx-padding: 10 8 4 8;"/>
+                <Button fx:id="btnCommandes" text="🛍️   Commandes" maxWidth="Infinity" onAction="#showCommandes"
+                        style="-fx-background-color: transparent; -fx-text-fill: #7a9ab8; -fx-font-size: 13px;
+                               -fx-alignment: CENTER_LEFT; -fx-padding: 12 16; -fx-background-radius: 10px; -fx-cursor: hand;"/>
+                <Button fx:id="btnLivraisons" text="🚚   Livraisons" maxWidth="Infinity" onAction="#showLivraisons"
+                        style="-fx-background-color: transparent; -fx-text-fill: #7a9ab8; -fx-font-size: 13px;
+                               -fx-alignment: CENTER_LEFT; -fx-padding: 12 16; -fx-background-radius: 10px; -fx-cursor: hand;"/>
+
+                <Label text="SUPPORT"
+                       style="-fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: #3a5070; -fx-padding: 10 8 4 8;"/>
+                <Button fx:id="btnFeedback" text="💬   Feedback" maxWidth="Infinity" onAction="#showFeedback"
+                        style="-fx-background-color: transparent; -fx-text-fill: #7a9ab8; -fx-font-size: 13px;
+                               -fx-alignment: CENTER_LEFT; -fx-padding: 12 16; -fx-background-radius: 10px; -fx-cursor: hand;"/>
+                <Region VBox.vgrow="ALWAYS"/>
+            </VBox>
+
+            <Region style="-fx-background-color: #1a2d47; -fx-pref-height: 1px;"/>
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 14 14; -fx-background-color: #091422;">
+                <StackPane minWidth="36" minHeight="36" maxWidth="36" maxHeight="36"
+                           style="-fx-background-color: #f97316; -fx-background-radius: 50%;">
+                    <Label fx:id="lblAvatarInitial" text="A"
+                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                </StackPane>
+                <VBox spacing="1" HBox.hgrow="ALWAYS">
+                    <Label fx:id="lblUserName" text="Admin" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                    <Label fx:id="lblUserRole" text="Administrateur" style="-fx-font-size: 11px; -fx-text-fill: #f97316;"/>
+                </VBox>
+                <Button text="⏻" onAction="#handleLogout"
+                        style="-fx-background-color: rgba(220,38,38,0.15); -fx-background-radius: 8px;
+                               -fx-text-fill: #ef4444; -fx-font-size: 14px; -fx-cursor: hand; -fx-padding: 6 8;"/>
+            </HBox>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox style="-fx-background-color: #f1f4f9;">
+            <HBox alignment="CENTER_LEFT" spacing="16"
+                  style="-fx-background-color: white; -fx-padding: 13 24;
+                         -fx-border-color: #e5e9f0; -fx-border-width: 0 0 1 0;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 6, 0, 0, 2);">
+                <ImageView fitWidth="90" fitHeight="38" preserveRatio="true" smooth="true">
+                    <image><Image url="@/images/logo_localtrade.png"/></image>
+                </ImageView>
+                <Label text="›" style="-fx-font-size: 14px; -fx-text-fill: #cbd5e1;"/>
+                <Label fx:id="lblPageTitle" text="Dashboard"
+                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <HBox alignment="CENTER_LEFT"
+                      style="-fx-background-color: #f1f4f9; -fx-background-radius: 20px;
+                             -fx-border-color: #e5e9f0; -fx-border-width: 1.5px; -fx-border-radius: 20px; -fx-padding: 0 14;">
+                    <Label text="🔍" style="-fx-font-size: 12px; -fx-text-fill: #94a3b8;"/>
+                    <TextField promptText="Rechercher..."
+                               style="-fx-pref-width: 200px; -fx-pref-height: 34px;
+                                      -fx-background-color: transparent; -fx-border-color: transparent;
+                                      -fx-font-size: 13px; -fx-padding: 0 0 0 8;"/>
+                </HBox>
+                <StackPane minWidth="36" minHeight="36" maxWidth="36" maxHeight="36"
+                           style="-fx-background-color: #f97316; -fx-background-radius: 50%;">
+                    <Label fx:id="lblTopAvatar" text="A"
+                           style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                </StackPane>
+            </HBox>
+            <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS"
+                       style="-fx-background-color: #f1f4f9; -fx-padding: 24 28 24 28;"/>
+        </VBox>
+    </center>
+</BorderPane>
