@@ -112,16 +112,17 @@ public class UserDashboardController {
         btn.setStyle(BTN_ACTIVE); btn.setMaxWidth(Double.MAX_VALUE);
         activeButton = btn;
         try {
-            // AccueilUser rechargé à chaque fois (données fraîches depuis session)
-            Node page = path.equals("/AccueilUser.fxml")
+            // AccueilUser et Publications rechargés à chaque fois (données fraîches depuis session)
+            boolean noCache = path.equals("/AccueilUser.fxml") || path.equals("/Publications.fxml");
+            Node page = noCache
                     ? new FXMLLoader(getClass().getResource(path)).load()
                     : cache.computeIfAbsent(path, p -> {
                 try { return new FXMLLoader(getClass().getResource(p)).load(); }
-                catch (IOException e) { return null; }
+                catch (IOException e) { e.printStackTrace(); return null; }
             });
             if (page != null) contentArea.getChildren().setAll(page);
             else showPlaceholder(title);
-        } catch (Exception e) { showPlaceholder(title); }
+        } catch (Exception e) { e.printStackTrace(); showPlaceholder(title); }
     }
 
     private void showPlaceholder(String name) {
