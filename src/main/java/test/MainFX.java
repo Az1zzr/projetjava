@@ -17,19 +17,12 @@ public class MainFX extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
         Parent root = loader.load();
 
-        // ✅ Taille adaptée au layout 2 colonnes du login
         Scene scene = new Scene(root, 1200, 700);
-
         stage.setTitle("LocalTrade — Plateforme Marketplace");
         stage.setScene(scene);
-
-        // Taille minimale
         stage.setMinWidth(900);
         stage.setMinHeight(600);
-
-        // Centrer à l'écran
         stage.centerOnScreen();
-
         stage.show();
     }
 }

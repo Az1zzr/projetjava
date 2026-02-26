@@ -27,7 +27,7 @@ public class RegisterController {
     @FXML private TextField       visibleConfirmField;
     @FXML private Button          toggleConfirmButton;
     @FXML private DatePicker      dateNaissancePicker;
-    @FXML private ChoiceBox<Role> roleChoice;
+    @FXML private ChoiceBox<Role> roleChoice;          // ✅ Fournisseur / Entrepreneur
     @FXML private Label           errorLabel;
     @FXML private Label           successLabel;
 
@@ -42,14 +42,18 @@ public class RegisterController {
 
     @FXML
     public void initialize() {
-        // Charger Fournisseur + Entrepreneur uniquement
+
+        // ✅ Charger UNIQUEMENT Fournisseur et Entrepreneur (jamais Administrateur)
         try {
+            // ✅ Tous les rôles sauf Administrateur
             List<Role> roles = roleService.getAll().stream()
-                    .filter(r -> !r.getNomRole().equalsIgnoreCase("Administrateur"))
+                    .filter(r -> !r.getNomRole().equalsIgnoreCase("admin"))
                     .toList();
             roleChoice.getItems().addAll(roles);
             if (!roles.isEmpty()) roleChoice.setValue(roles.get(0));
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // DatePicker : min 16 ans
         dateNaissancePicker.setDayCellFactory(picker -> new DateCell() {
@@ -115,12 +119,15 @@ public class RegisterController {
         String pwd     = isPwdVisible ? visiblePasswordField.getText() : passwordField.getText();
         String confirm = isConfirmVisible ? visibleConfirmField.getText() : confirmPasswordField.getText();
         LocalDate ddn  = dateNaissancePicker.getValue();
-        Role role      = roleChoice.getValue();
+        Role role      = roleChoice.getValue();  // ✅ Rôle choisi par l'utilisateur
 
         StringBuilder errors = new StringBuilder();
 
-        if (nom.length() < 2)    { setInvalid(nomField);    errors.append("• Nom : minimum 2 caractères.\n"); }    else setValid(nomField);
-        if (prenom.length() < 2) { setInvalid(prenomField); errors.append("• Prénom : minimum 2 caractères.\n"); } else setValid(prenomField);
+        if (nom.length() < 2)    { setInvalid(nomField);    errors.append("• Nom : minimum 2 caractères.\n"); }
+        else setValid(nomField);
+
+        if (prenom.length() < 2) { setInvalid(prenomField); errors.append("• Prénom : minimum 2 caractères.\n"); }
+        else setValid(prenomField);
 
         if (email.isEmpty()) {
             setInvalid(emailField); errors.append("• Email obligatoire.\n");
@@ -131,14 +138,20 @@ public class RegisterController {
         } else setValid(emailField);
 
         if (pwd.isEmpty()) {
-            setInvalid(passwordField); setInvalid(visiblePasswordField); errors.append("• Mot de passe obligatoire.\n");
+            setInvalid(passwordField); setInvalid(visiblePasswordField);
+            errors.append("• Mot de passe obligatoire.\n");
         } else if (pwd.length() < 8) {
-            setInvalid(passwordField); setInvalid(visiblePasswordField); errors.append("• Minimum 8 caractères.\n");
+            setInvalid(passwordField); setInvalid(visiblePasswordField);
+            errors.append("• Minimum 8 caractères.\n");
         } else if (!pwd.matches(".*[A-Z].*")) {
-            setInvalid(passwordField); setInvalid(visiblePasswordField); errors.append("• Au moins 1 majuscule requise.\n");
+            setInvalid(passwordField); setInvalid(visiblePasswordField);
+            errors.append("• Au moins 1 majuscule requise.\n");
         } else if (!pwd.matches(".*\\d.*")) {
-            setInvalid(passwordField); setInvalid(visiblePasswordField); errors.append("• Au moins 1 chiffre requis.\n");
-        } else { setValid(passwordField); setValid(visiblePasswordField); }
+            setInvalid(passwordField); setInvalid(visiblePasswordField);
+            errors.append("• Au moins 1 chiffre requis.\n");
+        } else {
+            setValid(passwordField); setValid(visiblePasswordField);
+        }
 
         if (!pwd.equals(confirm)) {
             setInvalid(confirmPasswordField); setInvalid(visibleConfirmField);
@@ -153,7 +166,12 @@ public class RegisterController {
             errors.append("• Vous devez avoir au moins 16 ans.\n");
         }
 
-        if (role == null) errors.append("• Veuillez sélectionner un rôle.\n");
+        // ✅ Vérification de sécurité — jamais Admin via register
+        if (role == null) {
+            errors.append("• Veuillez sélectionner un rôle.\n");
+        } else if (role.getNomRole().equalsIgnoreCase("Administrateur")) {
+            errors.append("• Rôle non autorisé.\n"); // sécurité double
+        }
 
         if (errors.length() > 0) { showError(errors.toString().trim()); return; }
 
@@ -162,15 +180,12 @@ public class RegisterController {
             u.setNom(nom);
             u.setPrenom(prenom);
             u.setEmail(email);
-            u.setMotDePasse(pwd);
+            u.setMotDePasse(pwd);   // ✅ BCrypt appliqué dans UserService.add()
             u.setDateNaissance(ddn);
-            u.setRole(role);
+            u.setRole(role);        // ✅ Fournisseur ou Entrepreneur uniquement
+
             userService.add(u);
-
-            // ✅ Sauvegarder en session
             SessionManager.getInstance().setCurrentUser(u);
-
-            // ✅ Redirect automatique vers la bonne page selon le rôle
             redirectAfterRegister(u);
 
         } catch (Exception e) {
@@ -178,10 +193,8 @@ public class RegisterController {
         }
     }
 
-    /** Redirige vers le bon layout immédiatement après l'inscription */
     private void redirectAfterRegister(User user) {
         try {
-            // ✅ Utilise SessionManager qui gère "fournisseur" ET "fournisseurs"
             String fxmlPath = SessionManager.getInstance().isRegularUser()
                     ? "/UserDashboard.fxml"
                     : "/MainLayout.fxml";
@@ -189,10 +202,9 @@ public class RegisterController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
 
-            // Passer l'utilisateur au controller
             Object ctrl = loader.getController();
-            if (ctrl instanceof Controller.MainLayoutController mlc)       mlc.setCurrentUser(user);
-            else if (ctrl instanceof Controller.UserDashboardController udc) udc.setCurrentUser(user);
+            if (ctrl instanceof MainLayoutController mlc)           mlc.setCurrentUser(user);
+            else if (ctrl instanceof UserDashboardController udc)   udc.setCurrentUser(user);
 
             var scene = emailField.getScene();
             scene.getWindow().setWidth(1280);
@@ -201,8 +213,7 @@ public class RegisterController {
             scene.setRoot(root);
 
         } catch (IOException e) {
-            // Si la redirection échoue, afficher succès et laisser se connecter manuellement
-            showSuccess("✅ Compte créé ! Cliquez ici pour vous connecter.");
+            showSuccess("✅ Compte créé ! Connectez-vous.");
             e.printStackTrace();
         }
     }
@@ -218,16 +229,6 @@ public class RegisterController {
     private boolean emailExists(String email) {
         try { return userService.getAll().stream().anyMatch(u -> u.getEmail().equalsIgnoreCase(email)); }
         catch (Exception e) { return false; }
-    }
-
-    private void clearFields() {
-        nomField.clear(); prenomField.clear(); emailField.clear();
-        passwordField.clear(); confirmPasswordField.clear();
-        dateNaissancePicker.setValue(null);
-        resetStyle(nomField); resetStyle(prenomField); resetStyle(emailField);
-        resetStyle(passwordField); resetStyle(visiblePasswordField);
-        resetStyle(confirmPasswordField); resetStyle(visibleConfirmField);
-        if (!roleChoice.getItems().isEmpty()) roleChoice.setValue(roleChoice.getItems().get(0));
     }
 
     private void hideMessages() {
