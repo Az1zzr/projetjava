@@ -6,7 +6,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.Window;
 import models.User;
+import utils.ImageSafetyGuard;
 import utils.SessionManager;
 
 import java.io.IOException;
@@ -46,7 +48,6 @@ public class UserDashboardController {
     @FXML
     public void initialize() {
         activeButton = btnAccueil;
-        // ✅ Session déjà remplie avant loader.load() dans LoginController
         User user = SessionManager.getInstance().getCurrentUser();
         if (user != null) applyUser(user);
         showAccueil();
@@ -64,8 +65,7 @@ public class UserDashboardController {
         String role   = user.getRole()   != null ? user.getRole().getNomRole() : "";
 
         String displayName = !prenom.isEmpty() ? prenom + " " + nom
-                : (!nom.isEmpty()   ? nom
-                : email.split("@")[0]);
+                : (!nom.isEmpty() ? nom : email.split("@")[0]);
 
         if (lblUserName != null) lblUserName.setText(displayName.trim());
         if (lblUserRole != null) lblUserRole.setText(role);
@@ -73,20 +73,25 @@ public class UserDashboardController {
         String init = displayName.trim().isEmpty() ? "U"
                 : String.valueOf(displayName.trim().charAt(0)).toUpperCase();
         if (lblAvatarInitial != null) lblAvatarInitial.setText(init);
-        // Top avatar photo
+        if (lblTopAvatar     != null) lblTopAvatar.setText(init);
+
+        // Au démarrage : afficher la photo existante directement sans vérification
         if (imgTopAvatar != null && user.getPhotoPath() != null && !user.getPhotoPath().isBlank()) {
             java.io.File f = new java.io.File(user.getPhotoPath());
             if (f.exists()) {
                 try {
                     imgTopAvatar.setImage(new javafx.scene.image.Image(f.toURI().toString()));
-                    imgTopAvatar.setVisible(true); imgTopAvatar.setManaged(true);
-                    if (lblTopAvatar != null) { lblTopAvatar.setVisible(false); lblTopAvatar.setManaged(false); }
+                    imgTopAvatar.setVisible(true);
+                    imgTopAvatar.setManaged(true);
+                    if (lblTopAvatar != null) {
+                        lblTopAvatar.setVisible(false);
+                        lblTopAvatar.setManaged(false);
+                    }
                 } catch (Exception ignored) {}
             }
         }
-        if (lblTopAvatar     != null) lblTopAvatar.setText(init);
 
-        // ✅ Badge couleur — startsWith pour gérer singulier ET pluriel
+        // Badge rôle
         if (lblRoleBadge != null) {
             lblRoleBadge.setText("● " + role.toUpperCase());
             String roleLower = role.trim().toLowerCase();
@@ -99,20 +104,24 @@ public class UserDashboardController {
         }
     }
 
-    @FXML public void showAccueil()    { loadPage("/AccueilUser.fxml", "Mon Compte", btnAccueil); }
-    @FXML public void showProduits()   { loadPage("/Produit.fxml",     "Produits",   btnProduits); }
-    @FXML public void showCommandes()  { loadPage("/Commande.fxml",    "Commandes",  btnCommandes); }
-    @FXML public void showLivraisons() { loadPage("/Livraison.fxml",   "Livraisons", btnLivraisons); }
-    @FXML public void showFeedback()       { loadPage("/Feedback.fxml",      "Feedback",      btnFeedback); }
-    @FXML public void showPublications()   { loadPage("/Publications.fxml",  "Publications",  btnPublications); }
+    @FXML public void showAccueil()      { loadPage("/AccueilUser.fxml",  "Mon Compte",   btnAccueil); }
+    @FXML public void showProduits()     { loadPage("/Produit.fxml",      "Produits",     btnProduits); }
+    @FXML public void showCommandes()    { loadPage("/Commande.fxml",     "Commandes",    btnCommandes); }
+    @FXML public void showLivraisons()   { loadPage("/Livraison.fxml",    "Livraisons",   btnLivraisons); }
+    @FXML public void showFeedback()     { loadPage("/Feedback.fxml",     "Feedback",     btnFeedback); }
+    @FXML public void showPublications() { loadPage("/Publications.fxml", "Publications", btnPublications); }
 
     private void loadPage(String path, String title, Button btn) {
         if (lblPageTitle != null) lblPageTitle.setText(title);
-        if (activeButton != null) { activeButton.setStyle(BTN_INACTIVE); activeButton.setMaxWidth(Double.MAX_VALUE); }
-        btn.setStyle(BTN_ACTIVE); btn.setMaxWidth(Double.MAX_VALUE);
+        if (activeButton != null) {
+            activeButton.setStyle(BTN_INACTIVE);
+            activeButton.setMaxWidth(Double.MAX_VALUE);
+        }
+        btn.setStyle(BTN_ACTIVE);
+        btn.setMaxWidth(Double.MAX_VALUE);
         activeButton = btn;
+
         try {
-            // AccueilUser et Publications rechargés à chaque fois (données fraîches depuis session)
             boolean noCache = path.equals("/AccueilUser.fxml") || path.equals("/Publications.fxml");
             Node page = noCache
                     ? new FXMLLoader(getClass().getResource(path)).load()
@@ -120,13 +129,18 @@ public class UserDashboardController {
                 try { return new FXMLLoader(getClass().getResource(p)).load(); }
                 catch (IOException e) { e.printStackTrace(); return null; }
             });
+
             if (page != null) contentArea.getChildren().setAll(page);
             else showPlaceholder(title);
-        } catch (Exception e) { e.printStackTrace(); showPlaceholder(title); }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showPlaceholder(title);
+        }
     }
 
     private void showPlaceholder(String name) {
-        VBox box = new VBox(16); box.setAlignment(Pos.CENTER);
+        VBox box = new VBox(16);
+        box.setAlignment(Pos.CENTER);
         box.setStyle("-fx-background-color: white; -fx-background-radius: 16px;");
         Label icon = new Label("🚧"); icon.setStyle("-fx-font-size: 52px;");
         Label lbl  = new Label("Module «" + name + "» en développement");
@@ -137,21 +151,38 @@ public class UserDashboardController {
         contentArea.getChildren().setAll(box);
     }
 
-    /** Click sur l'avatar en haut à droite → Mon Compte */
-    @FXML private void handleTopAvatarClick() {
+    @FXML
+    private void handleTopAvatarClick() {
         showAccueil();
     }
 
-    @FXML private void handleLogout() {
+    @FXML
+    private void handleChangeAvatar() {
+        Window window = contentArea.getScene().getWindow();
+
+        // ✅ Le callback est appelé UNIQUEMENT si l'image passe la vérification
+        // Si image sensible → page d'alerte s'affiche, callback jamais appelé
+        ImageSafetyGuard.pickAndCheck(window, imgTopAvatar, lblTopAvatar, chosenFile -> {
+            // Ce code s'exécute SEULEMENT si l'image est acceptée (SAFE ou WARNING confirmé)
+            User user = SessionManager.getInstance().getCurrentUser();
+            if (user != null) user.setPhotoPath(chosenFile.getAbsolutePath());
+        });
+    }
+
+    @FXML
+    private void handleLogout() {
         SessionManager.getInstance().logout();
         cache.clear();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
             javafx.scene.Parent root = loader.load();
             var scene = contentArea.getScene();
-            scene.getWindow().setWidth(1200); scene.getWindow().setHeight(700);
+            scene.getWindow().setWidth(1200);
+            scene.getWindow().setHeight(700);
             ((javafx.stage.Stage) scene.getWindow()).centerOnScreen();
             scene.setRoot(root);
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

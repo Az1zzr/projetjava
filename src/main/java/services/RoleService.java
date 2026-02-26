@@ -9,16 +9,18 @@ import java.util.List;
 
 public class RoleService implements IServiceRole<Role>{
 
-    private Connection conn;
+
+
+    private Connection conn() { return MyDB.getInstance().getConn(); }
 
     public RoleService() {
-        this.conn = MyDB.getInstance().getConn();
+
     }
 
     // ================== ADD ==================
     public void add(Role role) {
         String sql = "INSERT INTO role (nomRole) VALUES (?)";
-        try (PreparedStatement pst = conn.prepareStatement(sql)) {
+        try (PreparedStatement pst = conn().prepareStatement(sql)) {
             pst.setString(1, role.getNomRole());
             pst.executeUpdate();
         } catch (SQLException e) {
@@ -29,7 +31,7 @@ public class RoleService implements IServiceRole<Role>{
     // ================== UPDATE ==================
     public void update(Role role) {
         String sql = "UPDATE role SET nomRole=? WHERE id_role=?";
-        try (PreparedStatement pst = conn.prepareStatement(sql)) {
+        try (PreparedStatement pst = conn().prepareStatement(sql)) {
             pst.setString(1, role.getNomRole());
             pst.setInt(2, role.getId_role());
             pst.executeUpdate();
@@ -41,7 +43,7 @@ public class RoleService implements IServiceRole<Role>{
     // ================== DELETE ==================
     public void delete(Role role) {
         String sql = "DELETE FROM role WHERE id_role=?";
-        try (PreparedStatement pst = conn.prepareStatement(sql)) {
+        try (PreparedStatement pst = conn().prepareStatement(sql)) {
             pst.setInt(1, role.getId_role());
             pst.executeUpdate();
         } catch (SQLException e) {
@@ -53,7 +55,7 @@ public class RoleService implements IServiceRole<Role>{
     public List<Role> getAll() {
         List<Role> roles = new ArrayList<>();
         String sql = "SELECT * FROM role";
-        try (Statement stmt = conn.createStatement()) {
+        try (Statement stmt = conn().createStatement()) {
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 Role r = new Role();

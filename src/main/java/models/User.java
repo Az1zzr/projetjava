@@ -8,6 +8,7 @@ public class User {
     private String    nom;
     private String    prenom;
     private String    email;
+    private String    telephone;  // ✅ Nouveau champ pour le SMS
     private String    motDePasse;
     private LocalDate dateNaissance;
     private Role      role;
@@ -32,6 +33,14 @@ public class User {
 
     public String    getEmail()           { return email; }
     public void      setEmail(String e)   { this.email = e; }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
 
     public String    getMotDePasse()           { return motDePasse; }
     public void      setMotDePasse(String mp)  { this.motDePasse = mp; }

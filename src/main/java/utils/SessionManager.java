@@ -39,7 +39,7 @@ public class SessionManager {
 
     public boolean isAdmin() {
         return currentUser != null && currentUser.getRole() != null
-                && currentUser.getRole().getNomRole().trim().equalsIgnoreCase("Administrateur");
+                && currentUser.getRole().getNomRole().trim().equalsIgnoreCase("admin");
     }
 
     /** ✅ Retourne true si l'utilisateur est Fournisseur OU Entrepreneur (pas admin) */
