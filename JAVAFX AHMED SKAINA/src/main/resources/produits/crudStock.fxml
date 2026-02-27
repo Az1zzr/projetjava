@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="Tunescom.TunescomJAVA.controllers.produits.StockCRUDController"
+            stylesheets="@produit-style.css"
+            styleClass="root">
+
+    <!-- TOP -->
+    <top>
+        <VBox>
+            <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="16">
+                <Label text="GESTION STOCK" styleClass="brand"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Button text="🏠 ACCUEIL" styleClass="nav-btn" onAction="#onAccueil"/>
+                <Button text="📦 PRODUITS" styleClass="nav-btn" onAction="#onOpenProduits"/>
+                <Button text="📊 STOCK" styleClass="nav-btn nav-active"/>
+            </HBox>
+
+            <VBox styleClass="header-zone" spacing="10" alignment="CENTER">
+                <Label text="STOCK" styleClass="page-title"/>
+
+                <HBox spacing="10" alignment="CENTER">
+                    <TextField fx:id="searchField" promptText="Rechercher par produit_id..." styleClass="search"/>
+                    <Button text="Rechercher" styleClass="btn btn-blue" onAction="#onSearch"/>
+                    <Button text="Actualiser" styleClass="btn btn-green" onAction="#onRefresh"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </top>
+
+    <!-- CENTER -->
+    <center>
+        <BorderPane styleClass="content-frame">
+
+            <!-- TABLE -->
+            <center>
+                <VBox spacing="12">
+                    <padding>
+                        <Insets top="16" right="16" bottom="16" left="16"/>
+                    </padding>
+
+                    <Label text="Liste du stock" styleClass="section-title"/>
+
+                    <TableView fx:id="stockTable" styleClass="pretty-table" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colId" text="#" prefWidth="80"/>
+                            <TableColumn fx:id="colProduitId" text="Produit ID" prefWidth="180"/>
+                            <TableColumn fx:id="colQuantite" text="Quantité" prefWidth="180"/>
+                        </columns>
+                    </TableView>
+
+                    <Label fx:id="statusLabel" text="" styleClass="status"/>
+                </VBox>
+            </center>
+
+            <!-- FORM -->
+            <right>
+                <VBox styleClass="form-panel" spacing="12" prefWidth="360">
+                    <padding>
+                        <Insets top="16" right="16" bottom="16" left="16"/>
+                    </padding>
+
+                    <Label text="Formulaire Stock" styleClass="section-title"/>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="ID :" styleClass="label-muted"/>
+                        <Label fx:id="idLabel" text="(auto)" styleClass="id-strong"/>
+                    </HBox>
+
+                    <Label text="Produit ID" styleClass="label-muted"/>
+                    <TextField fx:id="produitIdField" promptText="Ex: 1" styleClass="input"/>
+
+                    <Label text="Quantité" styleClass="label-muted"/>
+                    <TextField fx:id="quantiteField" promptText="Ex: 10" styleClass="input"/>
+
+                    <Separator/>
+
+                    <HBox spacing="10">
+                        <Button text="Ajouter" styleClass="btn btn-green wide" onAction="#onAdd"/>
+                        <Button text="Modifier" styleClass="btn btn-blue wide" onAction="#onUpdate"/>
+                    </HBox>
+
+                    <HBox spacing="10">
+                        <Button text="Supprimer" styleClass="btn btn-red wide" onAction="#onDelete"/>
+                        <Button text="Vider" styleClass="btn btn-orange wide" onAction="#onClear"/>
+                    </HBox>
+
+                    <Separator/>
+
+                    <Button text="Retour Produits" styleClass="btn btn-gray" onAction="#onOpenProduits"/>
+                </VBox>
+            </right>
+
+        </BorderPane>
+    </center>
+
+    <!-- BOTTOM -->
+    <bottom>
+        <HBox styleClass="bottom-bar" alignment="CENTER" spacing="18">
+            <Button text="RETOUR" styleClass="btn btn-blue bottomWide" onAction="#onRetour"/>
+            <Button text="ACTUALISER" styleClass="btn btn-green bottomWide" onAction="#onRefresh"/>
+            <Button text="PRODUITS" styleClass="btn btn-orange bottomWide" onAction="#onOpenProduits"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

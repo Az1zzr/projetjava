@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="Tunescom.TunescomJAVA.controllers.produits.ProduitCRUDController"
+            stylesheets="@produit-style.css"
+            styleClass="root">
+
+    <top>
+        <VBox>
+            <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="16">
+                <Label text="GESTION PRODUITS" styleClass="brand"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="📦 MES PRODUITS" styleClass="nav-btn nav-active"/>
+                <Button fx:id="addStockNavButton" text="➕ AJOUTER STOCK" styleClass="nav-btn" onAction="#onOpenStock"/>
+            </HBox>
+
+            <VBox styleClass="header-zone" spacing="10" alignment="CENTER">
+                <Label text="MES PRODUITS" styleClass="page-title"/>
+                <HBox spacing="10" alignment="CENTER">
+                    <TextField fx:id="searchField" promptText="Rechercher (nom / adresse)..." styleClass="search"/>
+                    <Button text="Rechercher" styleClass="btn btn-blue" onAction="#onSearch"/>
+                    <Button text="Actualiser" styleClass="btn btn-green" onAction="#onRefresh"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </top>
+
+    <center>
+        <BorderPane styleClass="content-frame">
+            <center>
+                <VBox spacing="12">
+                    <padding>
+                        <Insets top="16" right="16" bottom="16" left="16"/>
+                    </padding>
+
+                    <Label text="Liste des produits" styleClass="section-title"/>
+                    <TableView fx:id="produitTable" styleClass="pretty-table" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colId" text="#" prefWidth="60"/>
+                            <TableColumn fx:id="colNom" text="Nom produit" prefWidth="220"/>
+                            <TableColumn fx:id="colAdresse" text="Adresse" prefWidth="220"/>
+                            <TableColumn fx:id="colPrix" text="Prix (TND)" prefWidth="120"/>
+                            <TableColumn fx:id="colPrixEUR" text="Prix (€)" prefWidth="120"/>
+                            <TableColumn fx:id="colPrixUSD" text="Prix ($)" prefWidth="120"/>
+                            <TableColumn fx:id="colQuantite" text="Qté" prefWidth="90"/>
+                            <TableColumn fx:id="colImage" text="Image" prefWidth="120"/>
+                            <TableColumn fx:id="colDetail" text="Action" prefWidth="100"/>
+                        </columns>
+                    </TableView>
+
+                    <Label fx:id="statusLabel" text="" styleClass="status"/>
+                </VBox>
+            </center>
+
+            <right>
+                <VBox styleClass="form-panel" spacing="12" prefWidth="360">
+                    <padding>
+                        <Insets top="16" right="16" bottom="16" left="16"/>
+                    </padding>
+
+                    <Label text="Formulaire" styleClass="section-title"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="ID :" styleClass="label-muted"/>
+                        <Label fx:id="idLabel" text="(auto)" styleClass="id-strong"/>
+                    </HBox>
+
+                    <Label text="Nom produit" styleClass="label-muted"/>
+                    <TextField fx:id="nomField" promptText="Ex: iPhone 15 Pro" styleClass="input"/>
+
+                    <Label text="Adresse" styleClass="label-muted"/>
+                    <TextField fx:id="adresseField" promptText="Ex: Tunis, Lac 2" styleClass="input"/>
+
+                    <Label text="Prix" styleClass="label-muted"/>
+                    <TextField fx:id="prixField" promptText="Ex: 50.00" styleClass="input"/>
+
+                    <Label text="Quantité" styleClass="label-muted"/>
+                    <TextField fx:id="quantiteField" promptText="Ex: 10" styleClass="input"/>
+
+                    <Label text="Image" styleClass="label-muted"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button fx:id="uploadImageButton" text="📁 Choisir Image" styleClass="btn btn-gray" onAction="#onUploadImage"/>
+                        <Label fx:id="imageLabel" text="" styleClass="label-muted"/>
+                    </HBox>
+
+                    <Separator/>
+
+                    <HBox spacing="10">
+                        <Button text="Ajouter" styleClass="btn btn-green wide" onAction="#onAdd"/>
+                        <Button text="Modifier" styleClass="btn btn-blue wide" onAction="#onUpdate"/>
+                    </HBox>
+
+
+
+                    <HBox spacing="10">
+                        <Button text="Supprimer" styleClass="btn btn-red wide" onAction="#onDelete"/>
+                        <Button text="Vider" styleClass="btn btn-gray wide" onAction="#onClear"/>
+                    </HBox>
+
+                    <Button text="📊 Afficher Stats" styleClass="btn btn-gray" onAction="#onShowStats"/>
+
+                    <Button text="📱 Générer QR" styleClass="btn btn-gray" onAction="#onGenerateQR"/>
+                    <ImageView fx:id="qrImageView" fitWidth="150" fitHeight="150" preserveRatio="true"/>
+
+
+
+                    <Separator/>
+                    <Button fx:id="addStockForSelectedButton" text="Ajouter Stock pour ce produit" styleClass="btn btn-orange"
+                            onAction="#onAddStockForSelected"/>
+                </VBox>
+            </right>
+        </BorderPane>
+    </center>
+
+    <bottom>
+        <HBox styleClass="bottom-bar" alignment="CENTER" spacing="18">
+            <Button text="ACTUALISER" styleClass="btn btn-green bottomWide" onAction="#onRefresh"/>
+        </HBox>
+    </bottom>
+</BorderPane>
